@@ -8,9 +8,18 @@ report_start_time = datetime.datetime.now()
 import os 
 os.system('cls')
 ### Input ###
-# open the file - and read all of the lines.
+
+def read_file(changes_file):
+
+	# use strip to strip out spaces and trim the line.
+
+	data = [line.strip() for line in open(changes_file, 'r')]
+
+	return data
+
+## open the file - and read all of the lines.
 changes_file = 'changes_python.log'
-# use strip to strip out spaces and trim the line.
+## use strip to strip out spaces and trim the line.
 data = [line.strip() for line in open(changes_file, 'r')]
 
 ### Analyse ###
@@ -79,15 +88,24 @@ print '\n'
 print '#'*10, ' Authors ', '#'*10
 print '-' * 31
 
-# Put the authors into a dict
-authors_dict = {}
+def get_authors(commits):
+	authors_dict = {}
+	for author in authors:
+		if author in authors_dict:
+			authors_dict[author] = authors_dict[author] + 1
+		else:
+			authors_dict[author] = 1
+	return authors_dict
+
+authors_dict = get_authors(commits)
 
 # Put the authors into a dict and analyse the authors for frequency
-for author in authors:
-	if author in authors_dict:
-		authors_dict[author] = authors_dict[author] + 1
-	else:
-		authors_dict[author] = 1
+#authors_dict = {}
+#for author in authors:
+#	if author in authors_dict:
+#		authors_dict[author] = authors_dict[author] + 1
+#	else:
+#		authors_dict[author] = 1
 print 'Count','	','Percent','	','Author'
 print '-' * 31
 for key, value in sorted(authors_dict.items()):
@@ -95,6 +113,8 @@ for key, value in sorted(authors_dict.items()):
 print '\n'
 print '-' * 31
 # Get the Top 5 authors
+# Use to find top 5 dates
+import collections 
 print 'Top 5 authors'
 print '-' * 31
 author_counter = collections.Counter(authors_dict)
@@ -123,15 +143,7 @@ print '#'*10, ' Dates ', '#'*10
 print '-' * 31
 
 
-# Use to find top 5 dates
-import collections 
-# get the Top 5 most popular dates
-date_counter = collections.Counter(dates_dict)
-print 'Top 5 dates with most commits' 
-print '-' * 31
-print 'Count','	','Date'
-for count in date_counter.most_common(5):
-	print  (str(count[1]) + '	' + str(count[0]))
+
 # Create a dates dict and analyse dates
 dates_dict = {}
 for date in dates:
@@ -139,6 +151,15 @@ for date in dates:
 		dates_dict[date] = dates_dict[date] + 1
 	else:
 		dates_dict[date] = 1
+
+# get the Top 5 most popular dates
+date_counter = collections.Counter(dates_dict)
+print 'Top 5 dates with most commits' 
+print '-' * 31
+print 'Count','	','Date'
+for count in date_counter.most_common(5):
+	print  (str(count[1]) + '	' + str(count[0]))
+
 
 #get all the keys and store them to a list
 allKeys = dates_dict.keys()
@@ -161,7 +182,7 @@ print '-' * 31
 start_date_range = datetime.datetime(2015,07,13)#  couldn't work out how to get the date in here automatically
 last_date_range = datetime.datetime(2015,11,27)
 print 'Length of time between first and last commit: ',  last_date_range - start_date_range
-print 'Length of time since last commit: ', now - last_date_range 
+print 'Length of time since last commit: ', report_start_time - last_date_range 
 
 #print 'test2'
 #start_date_range = str(firstKey)#  couldn't work out how to get the date in here automatically
