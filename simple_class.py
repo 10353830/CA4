@@ -72,6 +72,18 @@ while True:
 	except IndexError:
 		break
 
+# Put authors into a dict
+def get_authors(commits):
+	authors_dict = {}
+	for author in authors:
+		if author in authors_dict:
+			authors_dict[author] = authors_dict[author] + 1
+		else:
+			authors_dict[author] = 1
+	return authors_dict
+	
+authors_dict = get_authors(commits)
+
 ### Output ###
 print '-' * 31
 
@@ -82,58 +94,55 @@ print '-' * 31
 print 'Number of lines in the file: ', (len(data))
 # print the number of commits
 print 'Number of commits in the file: ',(len(commits))
+# print the number of authors
+print 'Number of Authors in file: ',(len(authors_dict))
 print '\n'
 
 ##### Authors #####
 print '#'*10, ' Authors ', '#'*10
 print '-' * 31
 
-def get_authors(commits):
-	authors_dict = {}
-	for author in authors:
-		if author in authors_dict:
-			authors_dict[author] = authors_dict[author] + 1
-		else:
-			authors_dict[author] = 1
-	return authors_dict
 
-authors_dict = get_authors(commits)
-
-# Put the authors into a dict and analyse the authors for frequency
-#authors_dict = {}
-#for author in authors:
-#	if author in authors_dict:
-#		authors_dict[author] = authors_dict[author] + 1
-#	else:
-#		authors_dict[author] = 1
+# analyse the authors for frequency
 print 'Count','	','Percent','	','Author'
 print '-' * 31
-for key, value in sorted(authors_dict.items()):
-	print  value,'	',round(float(value)/len(authors)*100,2),'	',key
+def get_authors_frequency():
+	for key, value in sorted(authors_dict.items()):
+		print value,'	',round(float(value)/len(authors)*100,2),'	',key
+#print author_frequency
+get_authors_frequency()
+
+
+
 print '\n'
 print '-' * 31
+
 # Get the Top 5 authors
-# Use to find top 5 dates
 import collections 
 print 'Top 5 authors'
 print '-' * 31
-author_counter = collections.Counter(authors_dict)
-for count in author_counter.most_common(5):
-	print  (str(count[1]) + '	' + str(count[0]))
+def top_5_authors():
+	author_counter = collections.Counter(authors_dict)
+	for count in author_counter.most_common(5):
+		print  (str(count[1]) + '	' + str(count[0]))
+# Output top 5 authors
+top_5_authors()
 	
 print '\n'
 print '-' * 31
 
 # Find author with most revisions added
-all_authors_items = authors_dict
-max_Author = [0]
-while all_authors_items:
-	key, value = all_authors_items.popitem()
-	if value > max_Author[0]:
-		max_Author = [value,[key]]
-	elif value == max_Author[0]:
-		max_Author[1].append(key)
-print 'The author with the highest commits: ',max_Author
+def top_author():
+	all_authors_items = authors_dict
+	max_Author = [0]
+	while all_authors_items:
+		key, value = all_authors_items.popitem()
+		if value > max_Author[0]:
+			max_Author = [value,[key]]
+		elif value == max_Author[0]:
+			max_Author[1].append(key)
+	print 'The author with the highest commits: ',max_Author
+top_author()
 
 print '-' * 31
 print '\n'

@@ -23,8 +23,10 @@ class TestCommits(unittest.TestCase):
 		commits = get_commits(self.data)
 		self.assertEqual('Thomas', commits[0]['author'])
 		self.assertEqual('r1551925', commits[0]['revision'])
-        
-    
+
+	def test_top_author(self):
+		self.assertEqual(,[191, ['Thomas']],top_author())
+
 
 if __name__ == '__main__':
 	unittest.main()
