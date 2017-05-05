@@ -43,37 +43,41 @@ class Commit:
 				+ ' and the changes ' + ','.join(self.changes)
    
 
-commits = []
-current_commit = None
-index = 0
-revisions = []
-authors = []
-dates = []
-while True:
-	try:
-		# parse each of the commits and put them 	to a list of commits
-		current_commit = Commit()
-		details = data[index + 1].split('|')
-		current_commit.revision = int(details[0].strip().strip('r'))
-		current_commit.author = details[1].strip()
-		current_commit.date = details[2].strip()
-		current_commit.comment_line_count = int(details[3].strip().split(' ')[0])
-		current_commit.changes = data[index+2:data.index('',index+1)]
-#print(current_commit.changes)
-		index = data.index(sep, index + 1)
-		current_commit.comment = data[index-current_commit.comment_line_count:index]
-		commits.append(current_commit)
-		authors.append(current_commit.author)
-		revisions.append(current_commit.revision)
-# Split the date to remove time
-		dates_split = current_commit.date.split(' ')
-		date_part = dates_split[0]
-		dates.append(date_part)
-	except IndexError:
-		break
+def parse_data(data):
+	commits = []
+	current_commit = None
+	index = 0
+	revisions = []
+	authors = []
+	dates = []
+	while True:
+		try:
+			# parse each of the commits and put them 	to a list of commits
+			current_commit = Commit()
+			details = data[index + 1].split('|')
+			current_commit.revision = int(details[0].strip().strip('r'))
+			current_commit.author = details[1].strip()
+			current_commit.date = details[2].strip()
+			current_commit.comment_line_count = int(details[3].strip().split(' ')[0])
+			current_commit.changes = data[index+2:data.index('',index+1)]
+			#print(current_commit.changes)
+			index = data.index(sep, index + 1)
+			current_commit.comment = data[index-current_commit.comment_line_count:index]
+			commits.append(current_commit)
+			authors.append(current_commit.author)
+			revisions.append(current_commit.revision)
+			# Split the date to remove time
+			dates_split = current_commit.date.split(' ')
+			date_part = dates_split[0]
+			dates.append(date_part)
+		except IndexError:
+			break
+	return (commits, authors, dates, revisions)
+
+commits, authors, dates, revisions = parse_data(data)
 
 # Put authors into a dict
-def get_authors(commits):
+def get_authors(commits, authors):
 	authors_dict = {}
 	for author in authors:
 		if author in authors_dict:
@@ -82,7 +86,7 @@ def get_authors(commits):
 			authors_dict[author] = 1
 	return authors_dict
 	
-authors_dict = get_authors(commits)
+authors_dict = get_authors(commits, authors)
 
 ### Output ###
 print '-' * 31
@@ -142,7 +146,7 @@ def top_author():
 		elif value == max_Author[0]:
 			max_Author[1].append(key)
 	print 'The author with the highest commits: ',max_Author
-top_author()
+top_A = top_author()
 
 print '-' * 31
 print '\n'
@@ -193,7 +197,6 @@ last_date_range = datetime.datetime(2015,11,27)
 print 'Length of time between first and last commit: ',  last_date_range - start_date_range
 print 'Length of time since last commit: ', report_start_time - last_date_range 
 
-#print 'test2'
 #start_date_range = str(firstKey)#  couldn't work out how to get the date in here automatically
 #last_date_range = str(lastKey)
 #print 'Length of time between first and last commit: ',  last_date_range - start_date_range
