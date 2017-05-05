@@ -1,34 +1,49 @@
 # Derek Baker 10353830
 
+# This code will look at the changes_python.log and evaluate:
+# 1 Time of report
+# 2 Number of lines in the file
+# 3 Number of commits in the file
+# 4 Number of Authors in file
+# 5 Frequency of commits by author
+# 6 Top 5 authors
+# 7 The author with the highest commits (just to show different code than above line)
+# 8 Top 5 dates with most commits
+# 9 First commit Date
+# 10 Last commit Date
+# 11 Length of time between first and last commit
+# 12 Length of time since last commit
+# 13 Last commit revision number
+# 14 Runtime of report
+
+
 # Used to do date ranges and current time
 import datetime
+
 # Set current datetime
 report_start_time = datetime.datetime.now()
+
 # Use to clear the screen for each run of code
 import os 
 os.system('cls')
-### Input ###
 
-def read_file(changes_file):
 
-	# use strip to strip out spaces and trim the line.
-
+##### Input #####
+# open the file - and read all of the lines.
+changes_file = 'changes_python.log'
+def read_file():	
+# use strip to strip out spaces and trim the line.
 	data = [line.strip() for line in open(changes_file, 'r')]
-
 	return data
 
-## open the file - and read all of the lines.
-changes_file = 'changes_python.log'
-## use strip to strip out spaces and trim the line.
-data = [line.strip() for line in open(changes_file, 'r')]
+data = read_file()
 
-### Analyse ###
+##### Analyse #####
 sep = 72*'-'
 
 # create the commit class to hold each of the elements
-
 class Commit:
-
+#Initialise
 	def __init__(self, revision = None, author = None, date = None, comment_line_count = None, changes = None, comment = None):
 		self.revision = revision
 		self.author = author
@@ -36,23 +51,26 @@ class Commit:
 		self.comment_line_count = comment_line_count
 		self.changes = changes
 		self.comment = comment
+# Get comments - not used 
+#	def get_commit_comment(self):
+#		return 'svn merge -r' + str(self.revision-1) + ':' + str(self.revision) + ' by ' \
+#				+ self.author + ' with the comment ' + ','.join(self.comment) \
+#				+ ' and the changes ' + ','.join(self.changes)
 
-	def get_commit_comment(self):
-		return 'svn merge -r' + str(self.revision-1) + ':' + str(self.revision) + ' by ' \
-				+ self.author + ' with the comment ' + ','.join(self.comment) \
-				+ ' and the changes ' + ','.join(self.changes)
-   
-
+# Churn the data
 def parse_data(data):
+# Create lists and set index to zero
 	commits = []
 	current_commit = None
 	index = 0
 	revisions = []
 	authors = []
 	dates = []
+# Loop the data
 	while True:
+		# Use Failsafe
 		try:
-			# parse each of the commits and put them 	to a list of commits
+			# parse each of the commits and put them into a list of commits
 			current_commit = Commit()
 			details = data[index + 1].split('|')
 			current_commit.revision = int(details[0].strip().strip('r'))
@@ -62,7 +80,7 @@ def parse_data(data):
 			current_commit.changes = data[index+2:data.index('',index+1)]
 			#print(current_commit.changes)
 			index = data.index(sep, index + 1)
-			current_commit.comment = data[index-current_commit.comment_line_count:index]
+# Not Used -current_commit.comment = data[index-current_commit.comment_line_count:index]
 			commits.append(current_commit)
 			authors.append(current_commit.author)
 			revisions.append(current_commit.revision)
@@ -88,49 +106,54 @@ def get_authors(commits, authors):
 	
 authors_dict = get_authors(commits, authors)
 
-### Output ###
-print '-' * 31
+##### Output #####
+print '-' * 31 # These are used for display purposes only
 
 # Show datetime report created
 print 'Time of report: ', report_start_time
 print '-' * 31
-# print the number of lines read
-print 'Number of lines in the file: ', (len(data))
-# print the number of commits
-print 'Number of commits in the file: ',(len(commits))
-# print the number of authors
-print 'Number of Authors in file: ',(len(authors_dict))
+
+# Output the number of lines read
+num_lines = (len(data))
+print 'Number of lines in the file: ', num_lines 
+
+# Output the number of commits
+num_commits = (len(commits))
+print 'Number of commits in the file: ', num_commits
+
+# Output the number of authors
+num_authors = (len(authors_dict))
+print 'Number of Authors in file: ', num_authors
 print '\n'
 
 ##### Authors #####
-print '#'*10, ' Authors ', '#'*10
+print '#'*10, ' Authors ', '#'*10 # For display only
 print '-' * 31
-
 
 # analyse the authors for frequency
-print 'Count','	','Percent','	','Author'
-print '-' * 31
 def get_authors_frequency():
 	for key, value in sorted(authors_dict.items()):
 		print value,'	',round(float(value)/len(authors)*100,2),'	',key
-#print author_frequency
-get_authors_frequency()
 
+#Output author_frequency
+print 'Count','	','Percent','	','Author' # Header of output
+print '-' * 31
+get_authors_frequency() # This can't be tested in current format as no variable has been created
 
-
-print '\n'
+print '\n' # for display only
 print '-' * 31
 
-# Get the Top 5 authors
+# Find the Top 5 authors
 import collections 
-print 'Top 5 authors'
-print '-' * 31
 def top_5_authors():
 	author_counter = collections.Counter(authors_dict)
 	for count in author_counter.most_common(5):
 		print  (str(count[1]) + '	' + str(count[0]))
+		
 # Output top 5 authors
-top_5_authors()
+print 'Top 5 authors' # Title of top 5 authors
+print '-' * 31
+top_5_authors() # # This can't be tested in current format as no variable has been created
 	
 print '\n'
 print '-' * 31
@@ -146,16 +169,16 @@ def top_author():
 		elif value == max_Author[0]:
 			max_Author[1].append(key)
 	print 'The author with the highest commits: ',max_Author
+	
+# Output author with highest commits
 top_A = top_author()
 
 print '-' * 31
 print '\n'
 
 ########## DATES ##############
-print '#'*10, ' Dates ', '#'*10
+print '#'*10, ' Dates ', '#'*10 # Display only
 print '-' * 31
-
-
 
 # Create a dates dict and analyse dates
 dates_dict = {}
@@ -165,47 +188,64 @@ for date in dates:
 	else:
 		dates_dict[date] = 1
 
-# get the Top 5 most popular dates
-date_counter = collections.Counter(dates_dict)
-print 'Top 5 dates with most commits' 
+# Find the Top 5 popular dates
+
+print 'Top 5 dates with commits' # For Title
 print '-' * 31
-print 'Count','	','Date'
-for count in date_counter.most_common(5):
-	print  (str(count[1]) + '	' + str(count[0]))
+print 'Count','	','Date' # Header of Top 5 dates
 
+# Find the Top 5 dates with commits
+def top_5_dates():
+	date_counter = collections.Counter(dates_dict)
+	for count in date_counter.most_common(5):
+		print  (str(count[1]) + '	' + str(count[0]))
+# Output the Top 5 dates with commits		
+top_5_dates() # This can't be tested in current format as no variable has been created
 
-#get all the keys and store them to a list
+#get all the keys from dates_dict and store them to a list
 allKeys = dates_dict.keys()
-
 #sort the list of keys
 allKeysSorted = sorted(allKeys)
-
 #retrieve the first and last keys in the list
 firstKey = allKeysSorted[0]
 lastKey = allKeysSorted[-1]
+
 print '\n'
 print '-' * 31
-# Output first and last commit date
-print 'First commit Date: ' + str(firstKey)
-print 'Last commit Date: ' + str(lastKey) 
 
+# Find and output first and last commit date
+f_c_d = str(firstKey)
+print 'First commit Date: ', f_c_d 
+l_c_d = str(lastKey) 
+print 'Last commit Date: ', l_c_d
 
 print '-' * 31
-# Get 
+
+# Find start and end date of project that can be used to calculate range
 start_date_range = datetime.datetime(2015,07,13)#  couldn't work out how to get the date in here automatically
-last_date_range = datetime.datetime(2015,11,27)
-print 'Length of time between first and last commit: ',  last_date_range - start_date_range
-print 'Length of time since last commit: ', report_start_time - last_date_range 
+last_date_range = datetime.datetime(2015,11,27)# no point in testing as the value is hard coded
+# Calculate date range of project
+date_range = str(last_date_range - start_date_range).split(',')
+# Output date range of project
+print 'Length of time between first and last commit: ', date_range[0]
 
-#start_date_range = str(firstKey)#  couldn't work out how to get the date in here automatically
-#last_date_range = str(lastKey)
-#print 'Length of time between first and last commit: ',  last_date_range - start_date_range
-#print 'Length of time since last commit: ', now - last_date_range 
+# Find lenght of time since end of project
+to_date_range = str(report_start_time - last_date_range).split(',')
+# Output lenght of time since end of project
+print 'Length of time since last commit: ', to_date_range[0]
+
 print '-' * 31
 
-print 'Last commit revision number: ',sorted(revisions)[-1]
+# Find and output last revision number
+last_revision_number = sorted(revisions)[-1]
+print 'Last commit revision number: ', last_revision_number
+
 print '-' * 31
-# Show runtime of report
+
+# Find and output runtime of report
 report_end_time = datetime.datetime.now()
-print 'Runtime of report: ', report_end_time - report_start_time
+run_time = report_end_time - report_start_time
+
+#Output report runtime
+print 'Runtime of report: ', run_time #Can't test as output varies
 print '-' * 31
