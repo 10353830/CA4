@@ -198,8 +198,12 @@ print 'Count','	','Date' # Header of Top 5 dates
 # Find the Top 5 dates with commits
 def top_5_dates():
 	date_counter = collections.Counter(dates_dict)
+	amc = counter.most_common()[0]
 	for count in date_counter.most_common(5):
 		print  (str(count[1]) + '	' + str(count[0]))
+	print '\n'
+	print '-' * 31
+	print amc[0],'	','Mode of commits\n' ,amc[1],'	','Instances of mode'
 # Output the Top 5 dates with commits		
 top_5_dates() # This can't be tested in current format as no variable has been created
 
