@@ -103,14 +103,15 @@ def get_authors(commits, authors):
 		else:
 			authors_dict[author] = 1
 	return authors_dict
-	
+
 authors_dict = get_authors(commits, authors)
 
 ##### Output #####
 print '-' * 31 # These are used for display purposes only
 
 # Show datetime report created
-print 'Time of report: ', report_start_time
+startime = str(report_start_time).split('.')
+print 'Time of report: ', startime[0]
 print '-' * 31
 
 # Output the number of lines read
@@ -149,12 +150,12 @@ def top_5_authors():
 	author_counter = collections.Counter(authors_dict)
 	for count in author_counter.most_common(5):
 		print  (str(count[1]) + '	' + str(count[0]))
-		
+
 # Output top 5 authors
 print 'Top 5 authors' # Title of top 5 authors
 print '-' * 31
 top_5_authors() # # This can't be tested in current format as no variable has been created
-	
+
 print '\n'
 print '-' * 31
 
@@ -169,7 +170,7 @@ def top_author():
 		elif value == max_Author[0]:
 			max_Author[1].append(key)
 	print 'The author with the highest commits: ',max_Author
-	
+
 # Output author with highest commits
 top_A = top_author()
 
